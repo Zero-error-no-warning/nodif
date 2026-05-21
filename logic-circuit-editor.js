@@ -125,9 +125,38 @@
 
       var lane = document.createElement('div');
       lane.className = node.operator === 'and' ? 'lc-serial' : 'lc-parallel';
-      node.children.forEach(function (c) {
-        lane.appendChild(self._createNodeElement(c));
-      });
+
+      if (node.operator === 'and') {
+        node.children.forEach(function (c, idx) {
+          if (idx > 0) {
+            var connector = document.createElement('div');
+            connector.className = 'lc-and-connector';
+            connector.textContent = '─';
+            lane.appendChild(connector);
+          }
+          lane.appendChild(self._createNodeElement(c));
+        });
+      } else {
+        var branchTop = document.createElement('div');
+        branchTop.className = 'lc-or-branch';
+        var branchBottom = document.createElement('div');
+        branchBottom.className = 'lc-or-branch';
+
+        if (node.children[0]) branchTop.appendChild(self._createNodeElement(node.children[0]));
+        if (node.children[1]) branchBottom.appendChild(self._createNodeElement(node.children[1]));
+
+        lane.appendChild(branchTop);
+        lane.appendChild(branchBottom);
+
+        if (node.children.length > 2) {
+          node.children.slice(2).forEach(function (c) {
+            var extra = document.createElement('div');
+            extra.className = 'lc-or-extra';
+            extra.appendChild(self._createNodeElement(c));
+            lane.appendChild(extra);
+          });
+        }
+      }
       wrap.appendChild(lane);
     } else {
       header.textContent = node.negate ? 'NOT 条件' : '条件';
