@@ -1,0 +1,14 @@
+body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fb; color: #1b2230; }
+.container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.toolbar { display:flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+button { padding: 8px 10px; border: 1px solid #c7d2e0; background: #fff; border-radius: 8px; cursor:pointer; }
+button:hover { background:#eef3ff; }
+.editor { border: 1px solid #c7d2e0; background:#fff; border-radius: 10px; padding: 10px; min-height: 320px; }
+.lc-node { border: 1px solid #cad4e3; border-radius: 8px; padding: 8px; margin: 8px; background:#fcfdff; }
+.lc-node.selected { border-color:#2e6cff; box-shadow: 0 0 0 2px rgba(46,108,255,.2); }
+.lc-header { font-size: 12px; font-weight: bold; color:#425166; margin-bottom: 6px; }
+.lc-serial { display: flex; flex-direction: column; gap: 6px; border-left: 4px solid #4f7cff; padding-left: 8px; }
+.lc-parallel { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 8px; border-top: 4px solid #20a39e; padding-top: 8px; }
+.lc-input { width: 100%; box-sizing: border-box; padding: 8px; border-radius: 6px; border:1px solid #cad4e3; }
+textarea { width:100%; margin-top: 12px; min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.help { font-size:12px; color:#56657b; margin-bottom:10px; }

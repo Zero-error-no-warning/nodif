@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logic Circuit Condition Editor</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>条件式ノードエディタ（論理回路風）</h1>
+    <p class="help">AND=直列、OR=並列として視覚編集できます。クリックで選択、Deleteで削除、Ctrl+NでAND追加、Ctrl+OでORラップ、Ctrl+MでNOT切替。</p>
+
+    <div class="toolbar">
+      <button id="addAnd">AND追加</button>
+      <button id="addOr">OR化（選択ノードを並列グループ化）</button>
+      <button id="wrapAnd">ANDグループ化</button>
+      <button id="wrapOr">ORグループ化</button>
+      <button id="toggleNot">NOT切替</button>
+      <button id="remove">削除</button>
+      <button id="saveJson">JSON保存</button>
+      <button id="loadJson">JSON読込</button>
+      <button id="outJs">JS式出力</button>
+      <button id="outVba">VBA式出力</button>
+    </div>
+
+    <div id="editor" class="editor"></div>
+    <textarea id="io" placeholder="JSON または 出力式"></textarea>
+  </div>
+
+  <script src="./logic-circuit-editor.js"></script>
+  <script>
+    const editor = new LogicCircuitEditor(document.getElementById('editor'));
+    editor.bindDefaultControls({
+      addAnd: document.getElementById('addAnd'),
+      addOr: document.getElementById('addOr'),
+      wrapAnd: document.getElementById('wrapAnd'),
+      wrapOr: document.getElementById('wrapOr'),
+      toggleNot: document.getElementById('toggleNot'),
+      remove: document.getElementById('remove'),
+      saveJson: document.getElementById('saveJson'),
+      loadJson: document.getElementById('loadJson'),
+      outJs: document.getElementById('outJs'),
+      outVba: document.getElementById('outVba'),
+      io: document.getElementById('io')
+    });
+  </script>
+</body>
+</html>
