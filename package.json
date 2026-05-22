@@ -1,0 +1,7 @@
+{
+  "name": "nodif",
+  "private": true,
+  "scripts": {
+    "test": "node --test logic-circuit-editor.test.js"
+  }
+}

@@ -94,6 +94,46 @@
     this._render();
   };
 
+
+  LogicCircuitEditor.prototype._addOrCondition = function () {
+    if (!this.selectedId) this.selectedId = this.root.id;
+
+    var lookup = this._findNode(this.selectedId);
+    if (!lookup.node) return;
+
+    if (lookup.node.type === 'group' && lookup.node.operator === 'or') {
+      var appended = textNode('new or');
+      lookup.node.children.push(appended);
+      this.selectedId = appended.id;
+      this._render();
+      return;
+    }
+
+    if (lookup.parent && lookup.parent.type === 'group' && lookup.parent.operator === 'or') {
+      var idx = lookup.parent.children.findIndex(function (c) { return c.id === lookup.node.id; });
+      var sibling = textNode('new or');
+      lookup.parent.children.splice(idx + 1, 0, sibling);
+      this.selectedId = sibling.id;
+      this._render();
+      return;
+    }
+
+    if (this.selectedId === this.root.id) {
+      var orGroup = groupNode('or', [textNode('new or'), textNode('new or')]);
+      this.root.children.push(orGroup);
+      this.selectedId = orGroup.id;
+      this._render();
+      return;
+    }
+
+    this._wrapSelected('or');
+    var wrappedLookup = this._findNode(this.selectedId);
+    if (wrappedLookup.node && wrappedLookup.node.type === 'group' && wrappedLookup.node.operator === 'or') {
+      wrappedLookup.node.children.push(textNode('new or'));
+      this._render();
+    }
+  };
+
   LogicCircuitEditor.prototype._toggleNot = function () {
     if (!this.selectedId) return;
     var lookup = this._findNode(this.selectedId);
@@ -190,6 +230,9 @@
   };
 
   LogicCircuitEditor.prototype.loadJSON = function (json) {
+    if (!json || json.type !== 'group' || !Array.isArray(json.children)) {
+      throw new Error('Invalid logic tree JSON');
+    }
     this.root = clone(json);
     this.selectedId = this.root.id;
     this._render();
@@ -227,12 +270,7 @@
     });
 
     controls.addOr.addEventListener('click', function () {
-      if (!self.selectedId) self.selectedId = self.root.id;
-      if (self.selectedId === self.root.id) {
-        self.root.children.push(groupNode('or', [textNode('new or')]));
-      } else {
-        self._wrapSelected('or');
-      }
+      self._addOrCondition();
     });
 
     controls.wrapAnd.addEventListener('click', function () { self._wrapSelected('and'); });
@@ -258,14 +296,26 @@
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Delete' || e.key === 'Backspace') self._deleteSelected();
+      var active = document.activeElement;
+      var isTextInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+
+      if (!isTextInput && (e.key === 'Delete' || e.key === 'Backspace')) self._deleteSelected();
       if (e.ctrlKey && e.key.toLowerCase() === 'n') {
         e.preventDefault();
-        self._insertAfter(self.selectedId || self.root.children[0].id, 'and');
+        if (!self.selectedId) {
+          self.selectedId = self.root.id;
+          self.root.children.push(textNode('new and'));
+          self._render();
+        } else if (self.selectedId === self.root.id) {
+          self.root.children.push(textNode('new and'));
+          self._render();
+        } else {
+          self._insertAfter(self.selectedId, 'and');
+        }
       }
       if (e.ctrlKey && e.key.toLowerCase() === 'o') {
         e.preventDefault();
-        self._wrapSelected('or');
+        self._addOrCondition();
       }
       if (e.ctrlKey && e.key.toLowerCase() === 'm') {
         e.preventDefault();
@@ -275,4 +325,4 @@
   };
 
   global.LogicCircuitEditor = LogicCircuitEditor;
-})(window);
+})(typeof window !== 'undefined' ? window : globalThis);
